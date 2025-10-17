@@ -116,7 +116,7 @@ const Home = () => {
         transition={{ duration: 1 }}
       >
         <div className="container">
-          <div className="row align-items-center min-vh-100">
+          <div className="row align-items-center min-vh-100 text-center text-lg-start">
             <div className="col-lg-6">
               <motion.div
                 className="hero-content"
@@ -135,7 +135,7 @@ const Home = () => {
                 </motion.p>
 
                 <motion.div
-                  className="d-flex gap-3 mt-4"
+                  className="d-flex gap-3 mt-4 justify-content-center justify-content-lg-start"
                   variants={itemVariants}
                 >
                   {!user && (
@@ -185,7 +185,7 @@ const Home = () => {
               </motion.div>
             </div>
 
-            <div className="col-lg-6">
+            <div className="col-lg-6 d-none d-lg-block">
               <motion.div
                 initial={{ x: 100, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
@@ -247,7 +247,7 @@ const Home = () => {
       </motion.section>
 
       {/* Featured Vehicles */}
-      <section className="py-5">
+      <section className="py-5 bg-light">
         <div className="container">
           <motion.div className="text-center mb-5" data-aos="fade-up">
             <h2 className="display-5 fw-bold text-gradient mb-3">
@@ -264,74 +264,87 @@ const Home = () => {
               <p className="mt-3 text-muted">Loading amazing vehicles...</p>
             </div>
           ) : (
-            <Swiper
-              modules={[Navigation, Pagination, Autoplay]}
-              spaceBetween={30}
-              slidesPerView={1}
-              navigation
-              pagination={{ clickable: true }}
-              autoplay={{ delay: 4000, disableOnInteraction: false }}
-              breakpoints={{
-                640: { slidesPerView: 1 },
-                768: { slidesPerView: 2 },
-                1024: { slidesPerView: 3 },
-              }}
-              className="vehicles-swiper"
-            >
-              {filteredVehicles.map((vehicle) => (
-                <SwiperSlide key={vehicle._id}>
-                  <motion.div
-                    className="vehicle-card-modern h-100"
-                    whileHover={{ scale: 1.02 }}
-                    data-aos="fade-up"
-                    data-aos-delay="100"
+            <>
+              <Swiper
+                modules={[Navigation, Pagination, Autoplay]}
+                spaceBetween={30}
+                slidesPerView={1}
+                navigation
+                pagination={{ clickable: true }}
+                autoplay={{ delay: 4000, disableOnInteraction: false }}
+                breakpoints={{
+                  640: { slidesPerView: 1 },
+                  768: { slidesPerView: 2 },
+                  1024: { slidesPerView: 3 },
+                }}
+                className="vehicles-swiper pb-5"
+              >
+                {filteredVehicles.map((vehicle) => (
+                  <SwiperSlide key={vehicle._id}>
+                    <motion.div
+                      className="vehicle-card-modern h-100"
+                      whileHover={{ scale: 1.02 }}
+                      data-aos="fade-up"
+                      data-aos-delay="100"
+                    >
+                      <div className="position-relative">
+                        <img
+                          src={`http://localhost:4000${vehicle.image}`}
+                          className="vehicle-image-modern"
+                          alt={`${vehicle.make} ${vehicle.model}`}
+                        />
+                        <div className="vehicle-badge">{vehicle.type}</div>
+                      </div>
+
+                      <div className="card-body p-4">
+                        <h5 className="card-title fw-bold mb-2">
+                          {vehicle.make} {vehicle.model}
+                        </h5>
+
+                        <div className="d-flex align-items-center mb-3">
+                          <div className="d-flex align-items-center me-3">
+                            <FiStar className="text-warning me-1" />
+                            <span className="fw-semibold">{vehicle.rating}</span>
+                            <small className="text-muted ms-1">
+                              ({vehicle.totalReviews})
+                            </small>
+                          </div>
+                          <div className="d-flex align-items-center text-muted">
+                            <FiMapPin className="me-1" />
+                            <small>{vehicle.location}</small>
+                          </div>
+                        </div>
+
+                        <div className="d-flex justify-content-between align-items-center">
+                          <div className="price-tag-modern">
+                            ₹{vehicle.pricePerDay}/day
+                          </div>
+                          <Link
+                            to={
+                              user ? `/customer/vehicle/${vehicle._id}` : "/login"
+                            }
+                            className="btn btn-primary-modern btn-sm"
+                          >
+                            {user ? "Book Now" : "Login to Book"}
+                          </Link>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+              <div className="text-center mt-4">
+                <Link to="/customer/dashboard">
+                  <motion.button
+                    className="btn btn-outline-modern btn-lg"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <div className="position-relative">
-                      <img
-                        src={vehicle.image}
-                        className="vehicle-image-modern"
-                        alt={`${vehicle.make} ${vehicle.model}`}
-                      />
-                      <div className="vehicle-badge">{vehicle.type}</div>
-                    </div>
-
-                    <div className="card-body p-4">
-                      <h5 className="card-title fw-bold mb-2">
-                        {vehicle.make} {vehicle.model}
-                      </h5>
-
-                      <div className="d-flex align-items-center mb-3">
-                        <div className="d-flex align-items-center me-3">
-                          <FiStar className="text-warning me-1" />
-                          <span className="fw-semibold">{vehicle.rating}</span>
-                          <small className="text-muted ms-1">
-                            ({vehicle.totalReviews})
-                          </small>
-                        </div>
-                        <div className="d-flex align-items-center text-muted">
-                          <FiMapPin className="me-1" />
-                          <small>{vehicle.location}</small>
-                        </div>
-                      </div>
-
-                      <div className="d-flex justify-content-between align-items-center">
-                        <div className="price-tag-modern">
-                          ₹{vehicle.pricePerDay}/day
-                        </div>
-                        <Link
-                          to={
-                            user ? `/customer/vehicle/${vehicle._id}` : "/login"
-                          }
-                          className="btn btn-primary-modern btn-sm"
-                        >
-                          {user ? "Book Now" : "Login to Book"}
-                        </Link>
-                      </div>
-                    </div>
-                  </motion.div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
+                    View All Vehicles
+                  </motion.button>
+                </Link>
+              </div>
+            </>
           )}
         </div>
       </section>

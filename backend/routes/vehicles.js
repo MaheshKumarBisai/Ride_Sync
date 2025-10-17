@@ -27,12 +27,17 @@ router.get("/", async (req, res) => {
     // Build query
     let query = {};
 
-    // If vendor flag is set, filter by current user (vendor)
-    if (vendor === "true" && req.user) {
+    // If the user is a vendor, only show their vehicles
+    if (req.user && req.user.role === 'vendor') {
       query.owner = req.user._id;
     } else {
       // For public listings, only show available vehicles
       query.status = status;
+
+      // If user is logged in and has a location, filter by their city
+      if (req.user && req.user.address && req.user.address.city) {
+        query.location = { $regex: req.user.address.city, $options: 'i' };
+      }
     }
 
     // Search functionality

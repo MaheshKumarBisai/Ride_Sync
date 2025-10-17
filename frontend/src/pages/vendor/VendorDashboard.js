@@ -28,8 +28,8 @@ const VendorDashboard = () => {
     try {
       // Fetch vendor's vehicles and bookings
       const [vehiclesRes, bookingsRes] = await Promise.all([
-        axios.get("http://localhost:4000/api/vehicles?vendor=true"),
-        axios.get("http://localhost:4000/api/bookings?vendor=true"),
+        axios.get("http://localhost:4000/api/vehicles"),
+        axios.get("http://localhost:4000/api/bookings"),
       ]);
 
       setVehicles(vehiclesRes.data.vehicles || vehiclesRes.data || []);
@@ -212,7 +212,7 @@ const VendorDashboard = () => {
           {stats.map((stat, index) => (
             <div key={index} className="col-lg-3 col-md-6 mb-4">
               <motion.div
-                className="stats-card"
+                className="stats-card h-100"
                 style={{ borderLeftColor: stat.color }}
                 whileHover={{ scale: 1.05 }}
                 data-aos="fade-up"
@@ -342,8 +342,8 @@ const VendorDashboard = () => {
                     >
                       <div className="position-relative">
                         <img
-                          src={vehicle.image}
-                          className="vehicle-image-modern"
+                          src={`http://localhost:4000${vehicle.image}`}
+                          className="vehicle-image-modern img-fluid"
                           alt={`${vehicle.make} ${vehicle.model}`}
                         />
                         <div className="vehicle-badge">{vehicle.status}</div>

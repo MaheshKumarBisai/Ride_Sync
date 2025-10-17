@@ -26,6 +26,8 @@ const AddVehicle = () => {
     image: "",
     images: [],
   });
+  const [uploading, setUploading] = useState(false);
+  const [image, setImage] = useState('');
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,6 +53,25 @@ const AddVehicle = () => {
         ? prev.features.filter((f) => f !== feature)
         : [...prev.features, feature],
     }));
+  };
+
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    const bodyFormData = new FormData();
+    bodyFormData.append('image', file);
+    setUploading(true);
+    try {
+      const { data } = await axios.post("http://localhost:4000/api/upload", bodyFormData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setImage(data.filePath);
+      setFormData((prev) => ({ ...prev, image: data.filePath }));
+      setUploading(false);
+    } catch (error) {
+      console.error(error);
+      toast.error('Image upload failed');
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -382,36 +403,21 @@ const AddVehicle = () => {
                   ></textarea>
                 </div>
 
-                {/* Vehicle Image URL */}
+                {/* Vehicle Image Upload */}
                 <div className="mb-5">
                   <h5 className="fw-bold mb-4">
                     <FiUpload className="me-2" />
                     📷 Vehicle Image
                   </h5>
                   <label className="form-label-modern mb-2">
-                    Primary Image URL (optional)
+                    Upload Vehicle Image
                   </label>
                   <input
-                    type="url"
-                    className="form-control form-control-modern mb-3"
-                    name="image"
-                    value={formData.image}
-                    onChange={handleChange}
-                    placeholder="Primary image URL"
+                    type="file"
+                    className="form-control form-control-modern"
+                    onChange={uploadFileHandler}
                   />
-                  <label className="form-label-modern mb-2">
-                    Additional Images (one URL per line or comma separated)
-                  </label>
-                  <textarea
-                    className="form-control form-control-modern mb-2"
-                    rows={4}
-                    placeholder="Enter additional image URLs (one per line or comma separated)"
-                    onChange={(e) => handleImagesChange(e.target.value)}
-                  />
-                  <small className="text-muted">
-                    Tip: Provide high-quality direct image URLs; the first
-                    available image will be used as the primary.
-                  </small>
+                  {uploading && <div>Uploading...</div>}
                 </div>
 
                 {/* Submit Button */}

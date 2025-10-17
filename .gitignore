@@ -39,3 +39,10 @@ Thumbs.db
 
 # Misc
 *.local
+
+# Python
+*.pyc
+__pycache__/
+
+# Jules
+jules-scratch/
