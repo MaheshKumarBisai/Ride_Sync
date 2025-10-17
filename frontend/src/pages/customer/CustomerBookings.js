@@ -1,0 +1,219 @@
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { FiCalendar, FiMapPin, FiClock, FiPhone } from "react-icons/fi";
+import axios from "axios";
+import { toast } from "react-toastify";
+
+const CustomerBookings = () => {
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
+  const fetchBookings = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/api/bookings");
+      // API returns { bookings, pagination }
+      setBookings(response.data.bookings || []);
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      // Mock data for demo
+      setBookings([
+        {
+          _id: "1",
+          vehicle: {
+            _id: "1",
+            make: "Maruti Suzuki",
+            model: "Swift Dzire",
+            image:
+              "https://images.unsplash.com/photo-1549924231-f129b911e442?w=400&h=300&fit=crop",
+          },
+          startDate: "2023-12-25",
+          endDate: "2023-12-27",
+          totalAmount: 5000,
+          status: "Confirmed",
+          pickupLocation: "Connaught Place, Delhi",
+          createdAt: "2023-12-20",
+        },
+        {
+          _id: "2",
+          vehicle: {
+            _id: "2",
+            make: "Hero",
+            model: "Splendor Plus",
+            image:
+              "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=300&fit=crop",
+          },
+          startDate: "2023-12-30",
+          endDate: "2024-01-02",
+          totalAmount: 2400,
+          status: "Pending",
+          pickupLocation: "Karol Bagh, Delhi",
+          createdAt: "2023-12-22",
+        },
+      ]);
+    }
+    setLoading(false);
+  };
+
+  const getStatusBadge = (status) => {
+    const statusColors = {
+      Confirmed: "success",
+      Pending: "warning",
+      Cancelled: "danger",
+      Completed: "info",
+      "In Progress": "primary",
+    };
+    return `badge bg-${statusColors[status] || "secondary"}`;
+  };
+
+  const handleCancelBooking = async (bookingId) => {
+    if (window.confirm("Are you sure you want to cancel this booking?")) {
+      try {
+        await axios.delete(`http://localhost:4000/api/bookings/${bookingId}`);
+        setBookings(bookings.filter((b) => b._id !== bookingId));
+        toast.success("Booking cancelled successfully");
+      } catch (error) {
+        toast.error("Failed to cancel booking");
+      }
+    }
+  };
+
+  if (loading) {
+    return (
+      <div
+        className="min-vh-100 d-flex align-items-center justify-content-center"
+        style={{ paddingTop: "100px" }}
+      >
+        <div className="text-center">
+          <div className="loading-spinner-modern mx-auto mb-3"></div>
+          <p className="text-muted">Loading your bookings...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="customer-bookings-page" style={{ paddingTop: "100px" }}>
+      <div className="container py-4">
+        <motion.div
+          className="mb-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <h2 className="text-gradient fw-bold mb-1">My Bookings 📅</h2>
+          <p className="text-muted">
+            Track and manage your vehicle reservations
+          </p>
+        </motion.div>
+
+        {bookings.length === 0 ? (
+          <motion.div
+            className="text-center py-5"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="mb-4" style={{ fontSize: "5rem" }}>
+              📅
+            </div>
+            <h4 className="mb-3">No bookings yet</h4>
+            <p className="text-muted mb-4">
+              Start exploring vehicles and make your first booking to see them
+              here.
+            </p>
+            <button
+              className="btn btn-primary-modern"
+              onClick={() => (window.location.href = "/customer/dashboard")}
+            >
+              Explore Vehicles
+            </button>
+          </motion.div>
+        ) : (
+          <div className="row">
+            {bookings.map((booking, index) => (
+              <div key={booking._id} className="col-lg-6 mb-4">
+                <motion.div
+                  className="card-modern h-100"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  whileHover={{ scale: 1.02 }}
+                >
+                  <div className="row g-0">
+                    <div className="col-4">
+                      <img
+                        src={booking.vehicle?.image}
+                        className="img-fluid h-100 w-100 rounded-start"
+                        style={{ objectFit: "cover" }}
+                        alt="Vehicle"
+                      />
+                    </div>
+                    <div className="col-8">
+                      <div className="card-body p-3">
+                        <div className="d-flex justify-content-between align-items-start mb-2">
+                          <h6 className="card-title fw-bold mb-1">
+                            {booking.vehicle?.make} {booking.vehicle?.model}
+                          </h6>
+                          <span className={getStatusBadge(booking.status)}>
+                            {booking.status}
+                          </span>
+                        </div>
+
+                        <div className="mb-2">
+                          <div className="d-flex align-items-center text-muted small mb-1">
+                            <FiCalendar className="me-2" />
+                            {new Date(booking.startDate).toLocaleDateString()} -
+                            {new Date(booking.endDate).toLocaleDateString()}
+                          </div>
+                          <div className="d-flex align-items-center text-muted small mb-1">
+                            <FiMapPin className="me-2" />
+                            {booking.pickupLocation}
+                          </div>
+                          <div className="d-flex align-items-center text-muted small mb-2">
+                            <FiClock className="me-2" />
+                            Booked on{" "}
+                            {new Date(booking.createdAt).toLocaleDateString()}
+                          </div>
+                        </div>
+
+                        <div className="d-flex justify-content-between align-items-center">
+                          <div className="price-tag-modern">
+                            ₹{booking.totalAmount}
+                          </div>
+                          <div className="d-flex gap-1">
+                            <button className="btn btn-outline-primary btn-sm">
+                              View
+                            </button>
+                            {booking.status === "Pending" && (
+                              <button
+                                className="btn btn-outline-danger btn-sm"
+                                onClick={() => handleCancelBooking(booking._id)}
+                              >
+                                Cancel
+                              </button>
+                            )}
+                            {booking.status === "Confirmed" && (
+                              <button className="btn btn-outline-success btn-sm">
+                                <FiPhone className="me-1" />
+                                Contact
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default CustomerBookings;
