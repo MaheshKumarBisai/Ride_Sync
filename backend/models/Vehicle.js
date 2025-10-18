@@ -92,7 +92,6 @@ const vehicleSchema = new mongoose.Schema({
   }],
   image: {
     type: String,
-    default: 'https://images.unsplash.com/photo-1549924231-f129b911e442?w=600&h=400&fit=crop'
   },
   status: {
     type: String,

@@ -124,12 +124,12 @@ const Home = () => {
                 initial="hidden"
                 animate="visible"
               >
-                <motion.h1 className="hero-title" variants={itemVariants}>
+                <motion.h1 className="display-3 fw-bold" variants={itemVariants}>
                   Find Your Perfect
-                  <span className="text-gradient d-block">Ride Today</span>
+                  <span className="d-block" style={{ color: 'red' }}>Ride Today</span>
                 </motion.h1>
 
-                <motion.p className="hero-subtitle" variants={itemVariants}>
+                <motion.p className="lead" variants={itemVariants}>
                   Rent cars, bikes, and scooters from trusted local vendors.
                   Quick, easy, and affordable transportation solutions.
                 </motion.p>

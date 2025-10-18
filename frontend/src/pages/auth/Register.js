@@ -110,7 +110,7 @@ const Register = () => {
                         onChange={handleChange}
                       />
                       <label
-                        className="btn btn-outline-primary w-100 p-3 text-center"
+                        className="btn btn-outline-modern w-100 p-3 text-center"
                         htmlFor="customer"
                       >
                         <div className="d-flex flex-column align-items-center">
@@ -133,7 +133,7 @@ const Register = () => {
                         onChange={handleChange}
                       />
                       <label
-                        className="btn btn-outline-success w-100 p-3 text-center"
+                        className="btn btn-outline-modern w-100 p-3 text-center"
                         htmlFor="vendor"
                       >
                         <div className="d-flex flex-column align-items-center">

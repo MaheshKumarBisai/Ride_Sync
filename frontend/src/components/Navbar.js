@@ -41,7 +41,7 @@ const Navbar = () => {
 
   return (
     <motion.nav
-      className="navbar navbar-expand-lg navbar-modern shadow-sm"
+      className="navbar navbar-expand-lg navbar-modern shadow-sm fixed-top"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}

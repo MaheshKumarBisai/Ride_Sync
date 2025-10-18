@@ -156,6 +156,14 @@ const Login = () => {
                   </p>
                 </motion.div>
               </form>
+              <div className="mt-3">
+                <button
+                  className="btn btn-outline-modern"
+                  onClick={() => navigate(-1)}
+                >
+                  <FiArrowLeft className="me-2" /> Go Back
+                </button>
+              </div>
             </motion.div>
           </div>
         </div>
