@@ -10,7 +10,7 @@ import {
   FiEdit,
   FiTrash2,
 } from "react-icons/fi";
-import axios from "axios";
+import api from "../../api";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 

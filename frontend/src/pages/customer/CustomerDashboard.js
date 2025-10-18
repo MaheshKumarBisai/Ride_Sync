@@ -13,7 +13,7 @@ import {
   FiStar,
   FiArrowRight,
 } from "react-icons/fi";
-import axios from "axios";
+import api from "../../api";
 import { useAuth } from "../../contexts/AuthContext";
 
 const CustomerDashboard = () => {
@@ -22,17 +22,18 @@ const CustomerDashboard = () => {
   const [bookings, setBookings] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedType, setSelectedType] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+  }, [selectedCity]);
 
   const fetchDashboardData = async () => {
     try {
       const [vehiclesRes, bookingsRes] = await Promise.all([
-        axios.get("http://localhost:4000/api/vehicles"),
-        axios.get("http://localhost:4000/api/bookings"),
+        api.get(`/vehicles?location=${selectedCity}`),
+        api.get("/bookings"),
       ]);
 
       setVehicles(vehiclesRes.data.vehicles || vehiclesRes.data || []);
@@ -231,6 +232,19 @@ const CustomerDashboard = () => {
                     <option value="Car">Cars</option>
                     <option value="Bike">Bikes</option>
                     <option value="Scooter">Scooters</option>
+                  </select>
+                </div>
+                <div className="col-md-3">
+                  <select
+                    className="form-select form-control-modern"
+                    value={selectedCity}
+                    onChange={(e) => setSelectedCity(e.target.value)}
+                  >
+                    <option value="">All Cities</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Bangalore">Bangalore</option>
+                    <option value="Hyderabad">Hyderabad</option>
                   </select>
                 </div>
                 <div className="col-md-3">

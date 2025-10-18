@@ -217,15 +217,6 @@ router.post(
       };
 
       // Set default image if not provided
-      // If images array provided, ensure primary image is set
-      if (
-        (!vehicleData.image || vehicleData.image === "") &&
-        Array.isArray(vehicleData.images) &&
-        vehicleData.images.length > 0
-      ) {
-        vehicleData.image = vehicleData.images[0];
-      }
-
       if (!vehicleData.image) {
         const defaultImages = {
           Car: "https://images.unsplash.com/photo-1549924231-f129b911e442?w=600&h=400&fit=crop",

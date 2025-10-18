@@ -7,12 +7,21 @@ router.post('/', (req, res) => {
     if(err){
       res.status(400).json({ message: err });
     } else {
-      if(req.file == undefined){
+      if(req.files == undefined){
         res.status(400).json({ message: 'Error: No File Selected!' });
       } else {
+        let imagePath = '';
+        if (req.files['image']) {
+          imagePath = `/uploads/${req.files['image'][0].filename}`;
+        }
+        let imagesPaths = [];
+        if (req.files['images']) {
+          imagesPaths = req.files['images'].map(file => `/uploads/${file.filename}`);
+        }
         res.json({
-          message: 'File uploaded successfully',
-          filePath: `/uploads/${req.file.filename}`
+          message: 'Files uploaded successfully',
+          image: imagePath,
+          images: imagesPaths
         });
       }
     }

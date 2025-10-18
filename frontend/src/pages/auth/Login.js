@@ -156,14 +156,6 @@ const Login = () => {
                   </p>
                 </motion.div>
               </form>
-              <div className="mb-3">
-                <button
-                  className="btn btn-outline-modern"
-                  onClick={() => window.history.back()}
-                >
-                  <FiArrowLeft className="me-2" /> Go Back
-                </button>
-              </div>
             </motion.div>
           </div>
         </div>

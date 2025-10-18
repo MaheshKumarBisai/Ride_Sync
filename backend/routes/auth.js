@@ -232,7 +232,7 @@ router.put(
 
       // Update role-specific info if provided
       if (req.user.role === "vendor" && req.body.vendorInfo) {
-        const allowedVendorUpdates = ["businessName"];
+        const allowedVendorUpdates = ["businessName", "licenseNumber"];
         Object.keys(req.body.vendorInfo).forEach((key) => {
           if (allowedVendorUpdates.includes(key)) {
             updates[`vendorInfo.${key}`] = req.body.vendorInfo[key];

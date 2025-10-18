@@ -89,12 +89,6 @@ const vehicleSchema = new mongoose.Schema({
   }],
   images: [{
     type: String,
-    validate: {
-      validator: function(url) {
-        return /^https?:\/\/.+/.test(url);
-      },
-      message: 'Invalid image URL format'
-    }
   }],
   image: {
     type: String,

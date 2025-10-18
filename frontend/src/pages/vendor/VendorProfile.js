@@ -1,9 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const VendorProfile = () => {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
+  const [formData, setFormData] = useState({
+    name: user?.name || '',
+    phone: user?.phone || '',
+    businessName: user?.vendorInfo?.businessName || '',
+    licenseNumber: user?.vendorInfo?.licenseNumber || '',
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const { data } = await axios.put('http://localhost:4000/api/auth/profile', formData);
+      setUser(data.user);
+      toast.success('Profile updated successfully');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update profile');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="vendor-profile-page vendor-theme" style={{ paddingTop: '100px' }}>
@@ -24,10 +51,31 @@ const VendorProfile = () => {
                 <span className="badge bg-success">{user?.role}</span>
               </div>
 
-              <div className="text-center">
-                <p className="text-muted">Vendor profile management features coming soon...</p>
-                <button className="btn btn-secondary-modern">Edit Profile</button>
-              </div>
+              <form onSubmit={handleSubmit}>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label-modern">Name</label>
+                    <input type="text" name="name" value={formData.name} onChange={handleChange} className="form-control form-control-modern" />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label-modern">Phone</label>
+                    <input type="text" name="phone" value={formData.phone} onChange={handleChange} className="form-control form-control-modern" />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label-modern">Business Name</label>
+                    <input type="text" name="businessName" value={formData.businessName} onChange={handleChange} className="form-control form-control-modern" />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label-modern">License Number</label>
+                    <input type="text" name="licenseNumber" value={formData.licenseNumber} onChange={handleChange} className="form-control form-control-modern" />
+                  </div>
+                </div>
+                <div className="text-center">
+                  <button type="submit" className="btn btn-secondary-modern" disabled={loading}>
+                    {loading ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </motion.div>

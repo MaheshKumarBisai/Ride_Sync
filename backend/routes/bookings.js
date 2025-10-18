@@ -13,7 +13,7 @@ router.get("/", auth, async (req, res) => {
     const { status, page = 1, limit = 10, vendor } = req.query;
     let bookings;
 
-    if (req.user.role === "vendor") {
+    if (req.user.role === "vendor" || req.query.vendor === "true") {
       // Get vendor bookings
       bookings = await Booking.getVendorBookings(req.user._id, status);
     } else {

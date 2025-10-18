@@ -78,6 +78,14 @@ These instructions will get you a copy of the project up and running on your loc
     -   Log in as the customer and browse the available vehicles.
     -   Select a vehicle and book it for your desired dates.
 
+## Database Reset
+
+To clear all data from the database, run the following command from the `backend` directory:
+
+```bash
+npm run reset-db
+```
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

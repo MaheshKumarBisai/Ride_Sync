@@ -11,7 +11,7 @@ import {
   FiClock,
 } from "react-icons/fi";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../api";
 
 const VehicleDetails = () => {
   const { id } = useParams();
@@ -169,7 +169,7 @@ const VehicleDetails = () => {
               transition={{ duration: 0.5 }}
             >
               <img
-                src={mainSrc}
+                src={`http://localhost:4000${mainSrc}`}
                 className="w-100 rounded-top"
                 style={{ height: 420, objectFit: "cover" }}
                 alt={`${vehicle.make} ${vehicle.model}`}
@@ -182,7 +182,7 @@ const VehicleDetails = () => {
                   {images.map((src, idx) => (
                     <img
                       key={idx}
-                      src={src}
+                      src={`http://localhost:4000${src}`}
                       onClick={() => setMainImageIndex(idx)}
                       style={{
                         width: 110,

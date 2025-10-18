@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiCalendar, FiMapPin, FiClock, FiPhone } from "react-icons/fi";
-import axios from "axios";
+import api from "../../api";
 import { toast } from "react-toastify";
+import { Modal, Button } from 'react-bootstrap';
 
 const CustomerBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     fetchBookings();
@@ -81,6 +84,16 @@ const CustomerBookings = () => {
     }
   };
 
+  const handleShowModal = (booking) => {
+    setSelectedBooking(booking);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedBooking(null);
+  };
+
   if (loading) {
     return (
       <div
@@ -145,7 +158,7 @@ const CustomerBookings = () => {
                   <div className="row g-0">
                     <div className="col-4">
                       <img
-                        src={booking.vehicle?.image}
+                        src={`http://localhost:4000${booking.vehicle?.image}`}
                         className="img-fluid h-100 w-100 rounded-start"
                         style={{ objectFit: "cover" }}
                         alt="Vehicle"
@@ -184,7 +197,7 @@ const CustomerBookings = () => {
                             ₹{booking.totalAmount}
                           </div>
                           <div className="d-flex gap-1">
-                            <button className="btn btn-outline-primary btn-sm">
+                            <button className="btn btn-outline-primary btn-sm" onClick={() => handleShowModal(booking)}>
                               View
                             </button>
                             {booking.status === "Pending" && (
@@ -211,6 +224,28 @@ const CustomerBookings = () => {
             ))}
           </div>
         )}
+        <Modal show={showModal} onHide={handleCloseModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Booking Details</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {selectedBooking && (
+              <div>
+                <h5>{selectedBooking.vehicle?.make} {selectedBooking.vehicle?.model}</h5>
+                <p><strong>Status:</strong> {selectedBooking.status}</p>
+                <p><strong>From:</strong> {new Date(selectedBooking.startDate).toLocaleDateString()}</p>
+                <p><strong>To:</strong> {new Date(selectedBooking.endDate).toLocaleDateString()}</p>
+                <p><strong>Total Amount:</strong> ₹{selectedBooking.totalAmount}</p>
+                <p><strong>Pickup Location:</strong> {selectedBooking.pickupLocation}</p>
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseModal}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </div>
   );
