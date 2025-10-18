@@ -7,7 +7,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { FiSearch, FiMapPin, FiStar, FiArrowRight } from "react-icons/fi";
-import axios from "axios";
+import api from "../api";
 import { useAuth } from "../contexts/AuthContext";
 
 const Home = () => {
@@ -24,7 +24,7 @@ const Home = () => {
 
   const fetchVehicles = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/vehicles");
+      const response = await api.get("/vehicles");
       setVehicles(response.data.vehicles || response.data || []);
     } catch (error) {
       console.error("Error fetching vehicles:", error);
@@ -192,7 +192,7 @@ const Home = () => {
                 transition={{ duration: 0.8, delay: 0.3 }}
               >
                 <img
-                  src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=600&h=500&fit=crop"
+                  src="https://images.unsplash.com/photo-1555529669-e69e7aa0ba9e?w=600&h=500&fit=crop"
                   alt="Vehicle Rental"
                   className="img-fluid rounded-4 shadow-modern"
                 />
@@ -346,6 +346,49 @@ const Home = () => {
               </div>
             </>
           )}
+        </div>
+      </section>
+
+      {/* Image Gallery Section */}
+      <section className="py-5">
+        <div className="container">
+          <motion.div className="text-center mb-5" data-aos="fade-up">
+            <h2 className="display-5 fw-bold text-gradient mb-3">
+              Explore Our Fleet
+            </h2>
+            <p className="lead text-muted">
+              A wide range of vehicles to suit every need
+            </p>
+          </motion.div>
+          <div className="row g-4">
+            <div className="col-md-4">
+              <motion.img
+                src="https://images.unsplash.com/photo-1599422474623-8c41de819b12?w=600&h=500&fit=crop"
+                alt="Car"
+                className="img-fluid rounded-4 shadow-modern"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+            <div className="col-md-4">
+              <motion.img
+                src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&h=500&fit=crop"
+                alt="Motorcycle"
+                className="img-fluid rounded-4 shadow-modern"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+            <div className="col-md-4">
+              <motion.img
+                src="https://images.unsplash.com/photo-1594495893623-994c6a62a632?w=600&h=500&fit=crop"
+                alt="Scooter"
+                className="img-fluid rounded-4 shadow-modern"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+              />
+            </div>
+          </div>
         </div>
       </section>
 

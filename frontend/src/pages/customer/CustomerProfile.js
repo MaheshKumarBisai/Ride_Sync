@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'react-toastify';
 import api from '../../api';
+import axios from 'axios';
 
 const CustomerProfile = () => {
   const { user, setUser } = useAuth();

@@ -17,6 +17,8 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
 
 // Customer Components
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
@@ -52,6 +54,8 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/contact-us" element={<ContactUs />} />
 
             {/* Customer Routes */}
             <Route

@@ -18,8 +18,8 @@ const VendorBookings = () => {
 
   const fetchBookings = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:4000/api/bookings"
+      const response = await api.get(
+        "/bookings?vendor=true"
       );
       setBookings(response.data.bookings || []);
     } catch (error) {
@@ -55,8 +55,8 @@ const VendorBookings = () => {
 
   const updateBookingStatus = async (bookingId, newStatus) => {
     try {
-      await axios.put(
-        `http://localhost:4000/api/bookings/${bookingId}/status`,
+      await api.put(
+        `/bookings/${bookingId}/status`,
         {
           status: newStatus,
         }

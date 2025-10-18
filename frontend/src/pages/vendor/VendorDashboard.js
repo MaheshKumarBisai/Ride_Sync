@@ -28,8 +28,8 @@ const VendorDashboard = () => {
     try {
       // Fetch vendor's vehicles and bookings
       const [vehiclesRes, bookingsRes] = await Promise.all([
-        axios.get("http://localhost:4000/api/vehicles"),
-        axios.get("http://localhost:4000/api/bookings"),
+        api.get("/vehicles?vendor=true"),
+        api.get("/bookings?vendor=true"),
       ]);
 
       setVehicles(vehiclesRes.data.vehicles || vehiclesRes.data || []);
@@ -126,7 +126,7 @@ const VendorDashboard = () => {
   const handleDeleteVehicle = async (vehicleId) => {
     if (window.confirm("Are you sure you want to delete this vehicle?")) {
       try {
-        await axios.delete(`http://localhost:4000/api/vehicles/${vehicleId}`);
+        await api.delete(`/vehicles/${vehicleId}`);
         setVehicles(vehicles.filter((v) => v._id !== vehicleId));
         toast.success("Vehicle deleted successfully");
       } catch (error) {
@@ -138,7 +138,7 @@ const VendorDashboard = () => {
   const handleToggleVisibility = async (vehicleId, currentStatus) => {
     const newStatus = currentStatus === "Available" ? "Inactive" : "Available";
     try {
-      await axios.put(`http://localhost:4000/api/vehicles/${vehicleId}`, {
+      await api.put(`/vehicles/${vehicleId}`, {
         status: newStatus,
       });
       setVehicles(

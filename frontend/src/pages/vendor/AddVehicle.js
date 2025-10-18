@@ -59,12 +59,16 @@ const AddVehicle = () => {
   const uploadFileHandler = async (e) => {
     const files = e.target.files;
     const bodyFormData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      bodyFormData.append('images', files[i]);
+    if (e.target.name === 'image') {
+      bodyFormData.append('image', files[0]);
+    } else {
+      for (let i = 0; i < files.length; i++) {
+        bodyFormData.append('images', files[i]);
+      }
     }
     setUploading(true);
     try {
-      const { data } = await axios.post("http://localhost:4000/api/upload", bodyFormData, {
+      const { data } = await api.post("/upload", bodyFormData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       if (e.target.name === 'image') {

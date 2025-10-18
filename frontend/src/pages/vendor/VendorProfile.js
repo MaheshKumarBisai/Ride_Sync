@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import axios from 'axios';
 
 const VendorProfile = () => {
   const { user, setUser } = useAuth();
