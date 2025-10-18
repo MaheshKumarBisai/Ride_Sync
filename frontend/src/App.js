@@ -49,49 +49,6 @@ function App() {
         <div className="App">
           {/* Conditionally render Navbar: hidden on /login and /register */}
           <AppContent />
-          <Routes>
-            {/* Public Routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/about-us" element={<AboutUs />} />
-            <Route path="/contact-us" element={<ContactUs />} />
-
-            {/* Customer Routes */}
-            <Route
-              path="/customer/*"
-              element={
-                <ProtectedRoute allowedRoles={["customer"]}>
-                  <Routes>
-                    <Route path="dashboard" element={<CustomerDashboard />} />
-                    <Route path="vehicle/:id" element={<VehicleDetails />} />
-                    <Route path="bookings" element={<CustomerBookings />} />
-                    <Route path="profile" element={<CustomerProfile />} />
-                  </Routes>
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Vendor Routes */}
-            <Route
-              path="/vendor/*"
-              element={
-                <ProtectedRoute allowedRoles={["vendor"]}>
-                  <Routes>
-                    <Route path="dashboard" element={<VendorDashboard />} />
-                    <Route path="vehicles" element={<VendorVehicles />} />
-                    <Route path="vehicles/add" element={<AddVehicle />} />
-                    <Route path="bookings" element={<VendorBookings />} />
-                    <Route path="profile" element={<VendorProfile />} />
-                  </Routes>
-                </ProtectedRoute>
-              }
-            />
-
-            {/* Fallback */}
-            <Route path="*" element={<Navigate to="/" />} />
-          </Routes>
-          <Footer />
           <ToastContainer
             position="top-right"
             autoClose={3000}

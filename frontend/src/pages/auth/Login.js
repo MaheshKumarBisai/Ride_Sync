@@ -105,13 +105,6 @@ const Login = () => {
                       placeholder="Enter your password"
                       required
                     />
-                    <button
-                      type="button"
-                      className="btn btn-link position-absolute top-50 end-0 translate-middle-y me-2 text-muted"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <FiEyeOff /> : <FiEye />}
-                    </button>
                   </div>
                 </motion.div>
 

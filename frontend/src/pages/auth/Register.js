@@ -110,7 +110,7 @@ const Register = () => {
                         onChange={handleChange}
                       />
                       <label
-                        className="btn btn-outline-modern w-100 p-3 text-center"
+                        className={`btn ${formData.role === 'customer' ? 'btn-primary-modern' : 'btn-outline-modern'} w-100 p-3 text-center`}
                         htmlFor="customer"
                       >
                         <div className="d-flex flex-column align-items-center">
@@ -133,7 +133,7 @@ const Register = () => {
                         onChange={handleChange}
                       />
                       <label
-                        className="btn btn-outline-modern w-100 p-3 text-center"
+                        className={`btn ${formData.role === 'vendor' ? 'btn-primary-modern' : 'btn-outline-modern'} w-100 p-3 text-center`}
                         htmlFor="vendor"
                       >
                         <div className="d-flex flex-column align-items-center">
@@ -275,9 +275,7 @@ const Register = () => {
                       Creating Account...
                     </div>
                   ) : (
-                    `Create ${
-                      formData.role === "vendor" ? "Vendor" : "Customer"
-                    } Account`
+                    `Create ${formData.role === 'vendor' ? 'Vendor' : 'Customer'} Account`
                   )}
                 </motion.button>
 

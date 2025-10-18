@@ -26,13 +26,16 @@ const VehicleDetails = () => {
     totalDays: 0,
     totalAmount: 0,
   });
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     const fetchVehicle = async () => {
       try {
-        const res = await axios.get(`http://localhost:4000/api/vehicles/${id}`);
+        const res = await api.get(`/vehicles/${id}`);
         const payload = res.data.vehicle || res.data;
         setVehicle(payload);
+        const reviewsRes = await api.get(`/vehicles/${id}/reviews`);
+        setReviews(reviewsRes.data.reviews || []);
       } catch (err) {
         console.error("Error fetching vehicle", err);
         // Fallback demo vehicle
@@ -90,7 +93,7 @@ const VehicleDetails = () => {
 
     try {
       setBookingLoading(true);
-      await axios.post("http://localhost:4000/api/bookings", {
+      await api.post("/bookings", {
         vehicleId: id,
         startDate: bookingData.startDate,
         endDate: bookingData.endDate,
@@ -251,6 +254,26 @@ const VehicleDetails = () => {
                       </div>
                     ))}
                   </div>
+                </div>
+
+                <div className="mb-4">
+                  <h5 className="fw-bold mb-3">Reviews</h5>
+                  {reviews.length > 0 ? (
+                    reviews.map((review) => (
+                      <div key={review._id} className="mb-3">
+                        <div className="d-flex align-items-center mb-2">
+                          <FiStar className="text-warning me-1" />
+                          <span className="fw-semibold">{review.rating}</span>
+                        </div>
+                        <p className="mb-0">{review.comment}</p>
+                        <small className="text-muted">
+                          - {review.customer.name} on {new Date(review.reviewDate).toLocaleDateString()}
+                        </small>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No reviews yet.</p>
+                  )}
                 </div>
               </div>
             </motion.div>

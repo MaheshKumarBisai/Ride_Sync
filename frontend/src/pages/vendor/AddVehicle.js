@@ -72,11 +72,12 @@ const AddVehicle = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       if (e.target.name === 'image') {
-        setImage(data.image);
-        setFormData((prev) => ({ ...prev, image: data.image }));
+        setImage(data.files.image.filename);
+        setFormData((prev) => ({ ...prev, image: data.files.image.filename }));
       } else {
-        setImages(data.images);
-        setFormData((prev) => ({ ...prev, images: data.images }));
+        const imageFilenames = data.files.images.map((file) => file.filename);
+        setImages(imageFilenames);
+        setFormData((prev) => ({ ...prev, images: imageFilenames }));
       }
       setUploading(false);
     } catch (error) {

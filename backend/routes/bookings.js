@@ -367,110 +367,6 @@ router.put(
   }
 );
 
-// Add review to completed booking
-router.post(
-  "/:id/review",
-  auth,
-  [
-    body("rating")
-      .isInt({ min: 1, max: 5 })
-      .withMessage("Rating must be between 1 and 5"),
-    body("comment")
-      .optional()
-      .isLength({ max: 500 })
-      .withMessage("Comment cannot exceed 500 characters"),
-  ],
-  async (req, res) => {
-    try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({
-          message: errors.array()[0].msg,
-        });
-      }
-
-      const { rating, comment } = req.body;
-
-      const booking = await Booking.findById(req.params.id);
-
-      if (!booking) {
-        return res.status(404).json({
-          message: "Booking not found",
-        });
-      }
-
-      if (booking.status !== "Completed") {
-        return res.status(400).json({
-          message: "Can only review completed bookings",
-        });
-      }
-
-      const isCustomer =
-        booking.customer.toString() === req.user._id.toString();
-      const isVendor = booking.vendor.toString() === req.user._id.toString();
-
-      if (!isCustomer && !isVendor) {
-        return res.status(403).json({
-          message: "Access denied",
-        });
-      }
-
-      // Add review
-      const reviewData = {
-        rating: Number(rating),
-        comment: comment?.trim(),
-        reviewDate: new Date(),
-      };
-
-      if (isCustomer) {
-        if (booking.customerReview?.rating) {
-          return res.status(400).json({
-            message: "You have already reviewed this booking",
-          });
-        }
-        booking.customerReview = reviewData;
-      } else {
-        if (booking.vendorReview?.rating) {
-          return res.status(400).json({
-            message: "You have already reviewed this booking",
-          });
-        }
-        booking.vendorReview = reviewData;
-      }
-
-      await booking.save();
-
-      // Update overall ratings
-      if (isCustomer) {
-        // Update vehicle rating
-        const vehicleReviews = await Booking.find({
-          vehicle: booking.vehicle,
-          status: "Completed",
-          "customerReview.rating": { $exists: true },
-        });
-
-        const avgRating =
-          vehicleReviews.reduce((sum, b) => sum + b.customerReview.rating, 0) /
-          vehicleReviews.length;
-
-        await Vehicle.findByIdAndUpdate(booking.vehicle, {
-          rating: Math.round(avgRating * 10) / 10,
-          totalReviews: vehicleReviews.length,
-        });
-      }
-
-      res.json({
-        message: "Review added successfully",
-        booking,
-      });
-    } catch (error) {
-      console.error("Add review error:", error);
-      res.status(500).json({
-        message: "Server error while adding review",
-      });
-    }
-  }
-);
 
 // Get booking analytics (vendors)
 router.get("/analytics/summary", auth, async (req, res) => {
@@ -593,3 +489,95 @@ router.delete("/:id", auth, async (req, res) => {
 });
 
 module.exports = router;
+
+// Add review to completed booking
+router.post(
+  "/:id/review",
+  auth,
+  [
+    body("rating")
+      .isInt({ min: 1, max: 5 })
+      .withMessage("Rating must be between 1 and 5"),
+    body("comment")
+      .optional()
+      .isLength({ max: 500 })
+      .withMessage("Comment cannot exceed 500 characters"),
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({
+          message: errors.array()[0].msg,
+        });
+      }
+
+      const { rating, comment } = req.body;
+
+      const booking = await Booking.findById(req.params.id);
+
+      if (!booking) {
+        return res.status(404).json({
+          message: "Booking not found",
+        });
+      }
+
+      if (booking.status !== "Completed") {
+        return res.status(400).json({
+          message: "Can only review completed bookings",
+        });
+      }
+
+      const isCustomer =
+        booking.customer.toString() === req.user._id.toString();
+
+      if (!isCustomer) {
+        return res.status(403).json({
+          message: "Access denied",
+        });
+      }
+
+      // Add review
+      const reviewData = {
+        rating: Number(rating),
+        comment: comment?.trim(),
+        reviewDate: new Date(),
+      };
+
+      if (booking.customerReview?.rating) {
+        return res.status(400).json({
+          message: "You have already reviewed this booking",
+        });
+      }
+      booking.customerReview = reviewData;
+
+      await booking.save();
+
+      // Update overall ratings
+      const vehicleReviews = await Booking.find({
+        vehicle: booking.vehicle,
+        status: "Completed",
+        "customerReview.rating": { $exists: true },
+      });
+
+      const avgRating =
+        vehicleReviews.reduce((sum, b) => sum + b.customerReview.rating, 0) /
+        vehicleReviews.length;
+
+      await Vehicle.findByIdAndUpdate(booking.vehicle, {
+        rating: Math.round(avgRating * 10) / 10,
+        totalReviews: vehicleReviews.length,
+      });
+
+      res.json({
+        message: "Review added successfully",
+        booking,
+      });
+    } catch (error) {
+      console.error("Add review error:", error);
+      res.status(500).json({
+        message: "Server error while adding review",
+      });
+    }
+  }
+);

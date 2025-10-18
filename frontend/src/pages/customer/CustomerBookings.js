@@ -10,6 +10,8 @@ const CustomerBookings = () => {
   const [loading, setLoading] = useState(true);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewData, setReviewData] = useState({ rating: 0, comment: '' });
 
   useEffect(() => {
     fetchBookings();
@@ -92,6 +94,32 @@ const CustomerBookings = () => {
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedBooking(null);
+  };
+
+  const handleShowReviewModal = (booking) => {
+    setSelectedBooking(booking);
+    setShowReviewModal(true);
+  };
+
+  const handleCloseReviewModal = () => {
+    setShowReviewModal(false);
+    setSelectedBooking(null);
+    setReviewData({ rating: 0, comment: '' });
+  };
+
+  const handleReviewChange = (e) => {
+    setReviewData({ ...reviewData, [e.target.name]: e.target.value });
+  };
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post(`/bookings/${selectedBooking._id}/review`, reviewData);
+      toast.success('Review submitted successfully');
+      handleCloseReviewModal();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to submit review');
+    }
   };
 
   if (loading) {
@@ -214,6 +242,14 @@ const CustomerBookings = () => {
                                 Contact
                               </button>
                             )}
+                            {booking.status === "Completed" && (
+                              <button
+                                className="btn btn-outline-warning btn-sm"
+                                onClick={() => handleShowReviewModal(booking)}
+                              >
+                                Leave a Review
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -245,6 +281,31 @@ const CustomerBookings = () => {
               Close
             </Button>
           </Modal.Footer>
+        </Modal>
+        <Modal show={showReviewModal} onHide={handleCloseReviewModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Leave a Review</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <form onSubmit={handleReviewSubmit}>
+              <div className="mb-3">
+                <label className="form-label">Rating</label>
+                <select name="rating" value={reviewData.rating} onChange={handleReviewChange} className="form-select">
+                  <option value="0" disabled>Select a rating</option>
+                  <option value="1">1 - Poor</option>
+                  <option value="2">2 - Fair</option>
+                  <option value="3">3 - Good</option>
+                  <option value="4">4 - Very Good</option>
+                  <option value="5">5 - Excellent</option>
+                </select>
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Comment</label>
+                <textarea name="comment" value={reviewData.comment} onChange={handleReviewChange} className="form-control" rows="3"></textarea>
+              </div>
+              <Button type="submit" variant="primary">Submit Review</Button>
+            </form>
+          </Modal.Body>
         </Modal>
       </div>
     </div>

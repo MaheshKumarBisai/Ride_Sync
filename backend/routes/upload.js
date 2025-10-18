@@ -11,11 +11,17 @@ conn.once('open', () => {
   gfs.collection('uploads');
 });
 
-router.post('/', upload.single('image'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).send('No file uploaded.');
-  }
-  res.json({ file: req.file });
+router.post('/', (req, res) => {
+  upload(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ message: err });
+    }
+    const files = {
+      image: req.files.image ? req.files.image[0] : null,
+      images: req.files.images || [],
+    };
+    res.json({ files });
+  });
 });
 
 router.get('/:filename', (req, res) => {

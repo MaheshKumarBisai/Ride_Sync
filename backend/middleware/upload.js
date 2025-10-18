@@ -24,4 +24,7 @@ const storage = new GridFsStorage({
 
 const upload = multer({ storage });
 
-module.exports = upload;
+module.exports = upload.fields([
+  { name: 'image', maxCount: 1 },
+  { name: 'images', maxCount: 10 },
+]);

@@ -392,6 +392,54 @@ const Home = () => {
         </div>
       </section>
 
+      {/* Testimonials Section */}
+      <section className="py-5 bg-light">
+        <div className="container">
+          <motion.div className="text-center mb-5" data-aos="fade-up">
+            <h2 className="display-5 fw-bold text-gradient mb-3">
+              What Our Users Say
+            </h2>
+            <p className="lead text-muted">
+              Real stories from our satisfied customers
+            </p>
+          </motion.div>
+          <Swiper
+            modules={[Pagination, Autoplay]}
+            spaceBetween={30}
+            slidesPerView={1}
+            pagination={{ clickable: true }}
+            autoplay={{ delay: 5000, disableOnInteraction: false }}
+            className="testimonials-swiper pb-5"
+          >
+            {[
+              {
+                name: "Rohan Sharma",
+                comment: "RideSync made my trip to Mumbai so much easier. The car was clean and the vendor was very professional. Highly recommended!",
+                image: "https://randomuser.me/api/portraits/men/32.jpg"
+              },
+              {
+                name: "Priya Patel",
+                comment: "I love how easy it is to rent a scooter for my daily commute. The app is user-friendly and the prices are very reasonable.",
+                image: "https://randomuser.me/api/portraits/women/44.jpg"
+              },
+              {
+                name: "Amit Singh",
+                comment: "As a vendor, RideSync has helped me reach a wider audience and increase my bookings. The platform is very easy to use and the support team is always helpful.",
+                image: "https://randomuser.me/api/portraits/men/46.jpg"
+              }
+            ].map((testimonial, index) => (
+              <SwiperSlide key={index}>
+                <div className="text-center">
+                  <img src={testimonial.image} alt={testimonial.name} className="rounded-circle mb-3" style={{ width: '80px', height: '80px' }} />
+                  <p className="lead fst-italic">"{testimonial.comment}"</p>
+                  <h5 className="fw-bold mt-3">{testimonial.name}</h5>
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="py-5 bg-light">
         <div className="container">
