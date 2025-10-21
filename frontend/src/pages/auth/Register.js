@@ -241,15 +241,6 @@ const Register = () => {
                           placeholder="Confirm password"
                           required
                         />
-                        <button
-                          type="button"
-                          className="btn btn-link position-absolute top-50 end-0 translate-middle-y me-2 text-muted"
-                          onClick={() =>
-                            setShowConfirmPassword(!showConfirmPassword)
-                          }
-                        >
-                          {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
-                        </button>
                       </div>
                     </motion.div>
                   </div>

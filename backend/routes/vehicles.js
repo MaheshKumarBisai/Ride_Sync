@@ -154,10 +154,16 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+const upload = require("../middleware/upload");
+
 // Create vehicle (vendors only)
 router.post(
   "/",
   auth,
+  upload.fields([
+    { name: 'image', maxCount: 1 },
+    { name: 'images', maxCount: 10 },
+  ]),
   [
     body("make").trim().notEmpty().withMessage("Vehicle make is required"),
     body("model").trim().notEmpty().withMessage("Vehicle model is required"),
@@ -214,6 +220,8 @@ router.post(
         ...req.body,
         owner: req.user._id,
         registrationNumber: req.body.registrationNumber.toUpperCase(),
+        image: req.files.image ? req.files.image[0].location : '',
+        images: req.files.images ? req.files.images.map(file => file.location) : [],
       };
 
       // Set default image if not provided

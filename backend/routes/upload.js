@@ -2,17 +2,19 @@ const express = require('express');
 const router = express.Router();
 const upload = require('../middleware/upload');
 
-router.post('/', (req, res) => {
-  upload(req, res, (err) => {
-    if (err) {
-      return res.status(400).json({ message: err });
-    }
-    const files = {
-      image: req.files.image ? req.files.image[0] : null,
-      images: req.files.images || [],
-    };
-    res.json({ files });
-  });
+router.post('/', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).send('No file uploaded.');
+  }
+  res.json({ location: req.file.location, filename: req.file.filename });
+});
+
+router.post('/multiple', upload.array('images', 10), (req, res) => {
+  if (!req.files) {
+    return res.status(400).send('No files uploaded.');
+  }
+  const locations = req.files.map(file => file.location);
+  res.json({ locations });
 });
 
 module.exports = router;

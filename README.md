@@ -104,11 +104,11 @@ For production, this application uses AWS S3 for image storage. You will need to
 3.  **Update `.env` file:**
     -   Add the following variables to your `backend/.env` file:
         ```
-        NODE_ENV=production
         AWS_ACCESS_KEY_ID=your-access-key-id
         AWS_SECRET_ACCESS_KEY=your-secret-access-key
         S3_BUCKET_NAME=your-s3-bucket-name
         ```
+    **Note:** To enable S3 storage, you must also set the `NODE_ENV` environment variable to `production` in your production environment.
 
 ## Contributing
 

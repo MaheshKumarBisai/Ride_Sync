@@ -172,7 +172,7 @@ const VehicleDetails = () => {
               transition={{ duration: 0.5 }}
             >
               <img
-                src={mainSrc}
+                src={mainSrc.startsWith('http') ? mainSrc : `/api/upload/${mainSrc}`}
                 className="w-100 rounded-top"
                 style={{ height: 420, objectFit: "cover" }}
                 alt={`${vehicle.make} ${vehicle.model}`}
@@ -185,7 +185,7 @@ const VehicleDetails = () => {
                   {images.map((src, idx) => (
                     <img
                       key={idx}
-                      src={src}
+                      src={src.startsWith('http') ? src : `/api/upload/${src}`}
                       onClick={() => setMainImageIndex(idx)}
                       style={{
                         width: 110,

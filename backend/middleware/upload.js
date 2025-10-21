@@ -31,7 +31,4 @@ const storage = process.env.NODE_ENV === 'production' ?
 
 const upload = multer({ storage });
 
-module.exports = upload.fields([
-  { name: 'image', maxCount: 1 },
-  { name: 'images', maxCount: 10 },
-]);
+module.exports = upload;

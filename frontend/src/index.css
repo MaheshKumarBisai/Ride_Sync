@@ -4,7 +4,7 @@
   --text-color: #000000;
   --background-color: #ffffff;
   --border-color: #eeeeee;
-  --font-family: 'Inter', sans-serif;
+  --font-family: 'Poppins, sans-serif';
 }
 
 body {
@@ -76,4 +76,15 @@ body {
 .vehicle-card-modern .vehicle-image-modern {
   height: 200px;
   object-fit: cover;
+}
+
+.hero-title {
+  font-size: 4rem;
+  font-weight: 700;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #6c757d;
 }

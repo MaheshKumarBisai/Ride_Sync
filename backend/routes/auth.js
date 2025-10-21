@@ -239,6 +239,9 @@ router.put(
           updates['vendorInfo.licenseNumber'] = req.body.licenseNumber;
         }
       }
+      if (req.body.profileImage) {
+        updates['profileImage'] = req.body.profileImage;
+      }
 
       const user = await User.findByIdAndUpdate(
         req.user._id,
