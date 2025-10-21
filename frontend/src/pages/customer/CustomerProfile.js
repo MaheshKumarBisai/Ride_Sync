@@ -1,9 +1,65 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../contexts/AuthContext';
+import { toast } from 'react-toastify';
+import api from '../../api';
 
 const CustomerProfile = () => {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
+  const [formData, setFormData] = useState({
+    name: user?.name || '',
+    phone: user?.phone || '',
+    street: user?.address?.street || '',
+    city: user?.address?.city || '',
+    state: user?.address?.state || '',
+    pincode: user?.address?.pincode || '',
+  });
+  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [image, setImage] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const uploadFileHandler = async (e) => {
+    const file = e.target.files[0];
+    const bodyFormData = new FormData();
+    bodyFormData.append('image', file);
+    setUploading(true);
+    try {
+      const { data } = await api.post('/upload', bodyFormData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      setImage(data.file.filename);
+      setFormData((prev) => ({ ...prev, profileImage: data.file.filename }));
+      setUploading(false);
+    } catch (error) {
+      console.error(error);
+      toast.error('Image upload failed');
+      setUploading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const { street, city, state, pincode, ...rest } = formData;
+    const updatedData = {
+      ...rest,
+      address: { street, city, state, pincode },
+      profileImage: image,
+    };
+    try {
+      const { data } = await api.put('/auth/profile', updatedData);
+      setUser(data.user);
+      toast.success('Profile updated successfully');
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to update profile');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="customer-profile-page" style={{ paddingTop: '100px' }}>
@@ -16,18 +72,50 @@ const CustomerProfile = () => {
           <div className="col-lg-8">
             <div className="card-modern p-4">
               <div className="text-center mb-4">
-                <div className="bg-primary rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style={{ width: '100px', height: '100px' }}>
-                  <span className="text-white fs-1">{user?.name?.charAt(0)}</span>
-                </div>
+                <img src={user.profileImage ? `/api/upload/${user.profileImage}` : `https://ui-avatars.com/api/?name=${user.name}`} alt="Profile" className="rounded-circle mb-3" style={{ width: '100px', height: '100px', objectFit: 'cover' }} />
                 <h3 className="fw-bold">{user?.name}</h3>
                 <p className="text-muted">{user?.email}</p>
                 <span className="badge bg-primary">{user?.role}</span>
               </div>
 
-              <div className="text-center">
-                <p className="text-muted">Profile management features coming soon...</p>
-                <button className="btn btn-primary-modern">Edit Profile</button>
-              </div>
+              <form onSubmit={handleSubmit}>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label-modern">Name</label>
+                    <input type="text" name="name" value={formData.name} onChange={handleChange} className="form-control form-control-modern" />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label-modern">Phone</label>
+                    <input type="text" name="phone" value={formData.phone} onChange={handleChange} className="form-control form-control-modern" />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label-modern">Street</label>
+                    <input type="text" name="street" value={formData.street} onChange={handleChange} className="form-control form-control-modern" />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label-modern">City</label>
+                    <input type="text" name="city" value={formData.city} onChange={handleChange} className="form-control form-control-modern" />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label-modern">State</label>
+                    <input type="text" name="state" value={formData.state} onChange={handleChange} className="form-control form-control-modern" />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label-modern">Pincode</label>
+                    <input type="text" name="pincode" value={formData.pincode} onChange={handleChange} className="form-control form-control-modern" />
+                  </div>
+                  <div className="col-md-12 mb-3">
+                    <label className="form-label-modern">Profile Picture</label>
+                    <input type="file" name="image" onChange={uploadFileHandler} className="form-control form-control-modern" />
+                    {uploading && <div>Uploading...</div>}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <button type="submit" className="btn btn-primary-modern" disabled={loading}>
+                    {loading ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </motion.div>

@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiCalendar, FiMapPin, FiClock, FiPhone } from "react-icons/fi";
-import axios from "axios";
+import api from "../../api";
 import { toast } from "react-toastify";
+import { Modal, Button } from 'react-bootstrap';
 
 const CustomerBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewData, setReviewData] = useState({ rating: 0, comment: '' });
 
   useEffect(() => {
     fetchBookings();
@@ -14,7 +19,7 @@ const CustomerBookings = () => {
 
   const fetchBookings = async () => {
     try {
-      const response = await axios.get("http://localhost:4000/api/bookings");
+      const response = await api.get("/bookings");
       // API returns { bookings, pagination }
       setBookings(response.data.bookings || []);
     } catch (error) {
@@ -72,12 +77,48 @@ const CustomerBookings = () => {
   const handleCancelBooking = async (bookingId) => {
     if (window.confirm("Are you sure you want to cancel this booking?")) {
       try {
-        await axios.delete(`http://localhost:4000/api/bookings/${bookingId}`);
+        await api.delete(`/bookings/${bookingId}`);
         setBookings(bookings.filter((b) => b._id !== bookingId));
         toast.success("Booking cancelled successfully");
       } catch (error) {
         toast.error("Failed to cancel booking");
       }
+    }
+  };
+
+  const handleShowModal = (booking) => {
+    setSelectedBooking(booking);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedBooking(null);
+  };
+
+  const handleShowReviewModal = (booking) => {
+    setSelectedBooking(booking);
+    setShowReviewModal(true);
+  };
+
+  const handleCloseReviewModal = () => {
+    setShowReviewModal(false);
+    setSelectedBooking(null);
+    setReviewData({ rating: 0, comment: '' });
+  };
+
+  const handleReviewChange = (e) => {
+    setReviewData({ ...reviewData, [e.target.name]: e.target.value });
+  };
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await api.post(`/bookings/${selectedBooking._id}/review`, reviewData);
+      toast.success('Review submitted successfully');
+      handleCloseReviewModal();
+    } catch (error) {
+      toast.error(error.response?.data?.message || 'Failed to submit review');
     }
   };
 
@@ -145,7 +186,7 @@ const CustomerBookings = () => {
                   <div className="row g-0">
                     <div className="col-4">
                       <img
-                        src={booking.vehicle?.image}
+                        src={`http://localhost:4000${booking.vehicle?.image}`}
                         className="img-fluid h-100 w-100 rounded-start"
                         style={{ objectFit: "cover" }}
                         alt="Vehicle"
@@ -184,7 +225,7 @@ const CustomerBookings = () => {
                             ₹{booking.totalAmount}
                           </div>
                           <div className="d-flex gap-1">
-                            <button className="btn btn-outline-primary btn-sm">
+                            <button className="btn btn-outline-primary btn-sm" onClick={() => handleShowModal(booking)}>
                               View
                             </button>
                             {booking.status === "Pending" && (
@@ -201,6 +242,14 @@ const CustomerBookings = () => {
                                 Contact
                               </button>
                             )}
+                            {booking.status === "Completed" && (
+                              <button
+                                className="btn btn-outline-warning btn-sm"
+                                onClick={() => handleShowReviewModal(booking)}
+                              >
+                                Leave a Review
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -211,6 +260,53 @@ const CustomerBookings = () => {
             ))}
           </div>
         )}
+        <Modal show={showModal} onHide={handleCloseModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Booking Details</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {selectedBooking && (
+              <div>
+                <h5>{selectedBooking.vehicle?.make} {selectedBooking.vehicle?.model}</h5>
+                <p><strong>Status:</strong> {selectedBooking.status}</p>
+                <p><strong>From:</strong> {new Date(selectedBooking.startDate).toLocaleDateString()}</p>
+                <p><strong>To:</strong> {new Date(selectedBooking.endDate).toLocaleDateString()}</p>
+                <p><strong>Total Amount:</strong> ₹{selectedBooking.totalAmount}</p>
+                <p><strong>Pickup Location:</strong> {selectedBooking.pickupLocation}</p>
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseModal}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <Modal show={showReviewModal} onHide={handleCloseReviewModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Leave a Review</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <form onSubmit={handleReviewSubmit}>
+              <div className="mb-3">
+                <label className="form-label">Rating</label>
+                <select name="rating" value={reviewData.rating} onChange={handleReviewChange} className="form-select">
+                  <option value="0" disabled>Select a rating</option>
+                  <option value="1">1 - Poor</option>
+                  <option value="2">2 - Fair</option>
+                  <option value="3">3 - Good</option>
+                  <option value="4">4 - Very Good</option>
+                  <option value="5">5 - Excellent</option>
+                </select>
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Comment</label>
+                <textarea name="comment" value={reviewData.comment} onChange={handleReviewChange} className="form-control" rows="3"></textarea>
+              </div>
+              <Button type="submit" variant="primary">Submit Review</Button>
+            </form>
+          </Modal.Body>
+        </Modal>
       </div>
     </div>
   );

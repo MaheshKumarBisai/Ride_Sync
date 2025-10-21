@@ -89,17 +89,9 @@ const vehicleSchema = new mongoose.Schema({
   }],
   images: [{
     type: String,
-    validate: {
-      validator: function(url) {
-        return /^https?:\/\/.+/.test(url);
-      },
-      message: 'Invalid image URL format'
-    }
   }],
-  image: {
-    type: String,
-    default: 'https://images.unsplash.com/photo-1549924231-f129b911e442?w=600&h=400&fit=crop'
-  },
+  image: String,
+  images: [String],
   status: {
     type: String,
     enum: ['Available', 'Rented', 'Maintenance', 'Inactive'],

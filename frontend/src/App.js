@@ -17,6 +17,8 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
 
 // Customer Components
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
@@ -47,11 +49,40 @@ function App() {
         <div className="App">
           {/* Conditionally render Navbar: hidden on /login and /register */}
           <AppContent />
-          <Routes>
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+        </div>
+      </Router>
+    </AuthProvider>
+  );
+}
+
+function AppContent() {
+  const location = useLocation();
+  const hideOn = ["/login", "/register"];
+  const shouldHide = hideOn.includes(location.pathname);
+
+  return (
+    <>
+      {!shouldHide && <Navbar />}
+      <main style={{ paddingTop: !shouldHide ? '80px' : '0' }}>
+        <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/contact-us" element={<ContactUs />} />
 
             {/* Customer Routes */}
             <Route
@@ -87,31 +118,10 @@ function App() {
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
-          <Footer />
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
-        </div>
-      </Router>
-    </AuthProvider>
+      </main>
+      {!shouldHide && <Footer />}
+    </>
   );
-}
-
-function AppContent() {
-  const location = useLocation();
-  const hideOn = ["/login", "/register"];
-  const shouldHide = hideOn.includes(location.pathname);
-
-  return <>{!shouldHide && <Navbar />}</>;
 }
 
 export default App;

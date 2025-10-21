@@ -231,13 +231,13 @@ router.put(
       });
 
       // Update role-specific info if provided
-      if (req.user.role === "vendor" && req.body.vendorInfo) {
-        const allowedVendorUpdates = ["businessName"];
-        Object.keys(req.body.vendorInfo).forEach((key) => {
-          if (allowedVendorUpdates.includes(key)) {
-            updates[`vendorInfo.${key}`] = req.body.vendorInfo[key];
-          }
-        });
+      if (req.user.role === "vendor") {
+        if (req.body.businessName) {
+          updates['vendorInfo.businessName'] = req.body.businessName;
+        }
+        if (req.body.licenseNumber) {
+          updates['vendorInfo.licenseNumber'] = req.body.licenseNumber;
+        }
       }
 
       const user = await User.findByIdAndUpdate(

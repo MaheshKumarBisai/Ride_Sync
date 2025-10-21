@@ -41,29 +41,22 @@ const Navbar = () => {
 
   return (
     <motion.nav
-      className="navbar navbar-expand-lg navbar-modern floating-navbar fixed-top shadow-modern w-100"
+      className="navbar navbar-expand-lg navbar-modern shadow-sm fixed-top"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       style={{
-        borderRadius: "0 0 2rem 2rem",
-        margin: 0,
-        left: 0,
-        right: 0,
-        width: "100vw",
-        maxWidth: "100vw",
-        zIndex: 1050,
-        background: "linear-gradient(90deg, #6366f1 0%, #06d6a0 100%)",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+        background: "var(--background-color)",
+        borderBottom: "1px solid var(--border-color)",
       }}
     >
       <div className="container">
         <Link
           className="navbar-brand navbar-brand-modern d-flex align-items-center"
           to="/"
+          style={{ fontFamily: 'Poppins, sans-serif', fontWeight: '600' }}
         >
-          <span className="brand-icon me-2">🚗</span>
-          <span>RideSync</span>
+          RideSync
         </Link>
 
         <button
@@ -97,60 +90,15 @@ const Navbar = () => {
 
             <div className="d-flex align-items-center">
               {user ? (
-                <div className="dropdown">
+                <Link to={getDashboardLink()}>
                   <motion.button
-                    className="btn btn-outline-modern dropdown-toggle"
-                    type="button"
-                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="btn btn-primary-modern"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <FiUser className="me-2" />
-                    {user.name}
+                    Go to Dashboard
                   </motion.button>
-
-                  <AnimatePresence>
-                    {showUserMenu && (
-                      <motion.div
-                        className="dropdown-menu show mt-2"
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <Link
-                          className="dropdown-item"
-                          to={getDashboardLink()}
-                          onClick={() => setShowUserMenu(false)}
-                        >
-                          Dashboard
-                        </Link>
-                        <Link
-                          className="dropdown-item"
-                          to={
-                            user.role === "vendor"
-                              ? "/vendor/profile"
-                              : "/customer/profile"
-                          }
-                          onClick={() => setShowUserMenu(false)}
-                        >
-                          Profile
-                        </Link>
-                        <hr className="dropdown-divider" />
-                        <button
-                          className="dropdown-item text-danger"
-                          onClick={() => {
-                            setShowUserMenu(false);
-                            handleLogout();
-                          }}
-                        >
-                          <FiLogOut className="me-2" />
-                          Logout
-                        </button>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
+                </Link>
               ) : (
                 <div className="d-flex gap-2">
                   <Link to="/login">
