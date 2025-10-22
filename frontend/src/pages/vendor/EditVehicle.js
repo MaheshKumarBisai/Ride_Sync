@@ -1,12 +1,13 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiArrowLeft, FiUpload, FiDollarSign, FiMapPin } from "react-icons/fi";
 import { toast } from "react-toastify";
 import api from "../../api";
 
-const AddVehicle = () => {
+const EditVehicle = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     make: "",
@@ -29,6 +30,20 @@ const AddVehicle = () => {
   const [uploading, setUploading] = useState(false);
   const [image, setImage] = useState('');
   const [images, setImages] = useState([]);
+
+  useEffect(() => {
+    const fetchVehicle = async () => {
+      try {
+        const { data } = await api.get(`/vehicles/${id}`);
+        setFormData(data.vehicle);
+        setImage(data.vehicle.image);
+        setImages(data.vehicle.images);
+      } catch (error) {
+        toast.error("Failed to fetch vehicle data");
+      }
+    };
+    fetchVehicle();
+  }, [id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -114,13 +129,13 @@ const AddVehicle = () => {
         images: images,
       };
 
-      await api.post("/vehicles", vehicleData);
-      toast.success("🎉 Vehicle added successfully!");
+      await api.put(`/vehicles/${id}`, vehicleData);
+      toast.success("🎉 Vehicle updated successfully!");
       setTimeout(() => {
         navigate("/vendor/vehicles");
       }, 2000);
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to add vehicle");
+      toast.error(error.response?.data?.message || "Failed to update vehicle");
     } finally {
       setLoading(false);
     }
@@ -160,9 +175,9 @@ const AddVehicle = () => {
               <FiArrowLeft />
             </motion.button>
             <div>
-              <h2 className="text-gradient fw-bold mb-1">Add New Vehicle</h2>
+              <h2 className="text-gradient fw-bold mb-1">Edit Vehicle</h2>
               <p className="text-muted mb-0">
-                List your vehicle and start earning
+                Update your vehicle details
               </p>
             </div>
           </div>
@@ -459,10 +474,10 @@ const AddVehicle = () => {
                     {loading ? (
                       <div className="d-flex align-items-center justify-content-center">
                         <div className="spinner-border spinner-border-sm me-2" />
-                        Adding Vehicle...
+                        Saving Changes...
                       </div>
                     ) : (
-                      <>🚀 Add Vehicle to Fleet</>
+                      <>💾 Save Changes</>
                     )}
                   </motion.button>
                 </div>
@@ -475,4 +490,4 @@ const AddVehicle = () => {
   );
 };
 
-export default AddVehicle;
+export default EditVehicle;

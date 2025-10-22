@@ -90,15 +90,60 @@ const Navbar = () => {
 
             <div className="d-flex align-items-center">
               {user ? (
-                <Link to={getDashboardLink()}>
+                <div className="dropdown">
                   <motion.button
-                    className="btn btn-primary-modern"
+                    className="btn btn-outline-modern dropdown-toggle"
+                    type="button"
+                    onClick={() => setShowUserMenu(!showUserMenu)}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    Go to Dashboard
+                    <FiUser className="me-2" />
+                    {user.name}
                   </motion.button>
-                </Link>
+
+                  <AnimatePresence>
+                    {showUserMenu && (
+                      <motion.div
+                        className="dropdown-menu show mt-2"
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Link
+                          className="dropdown-item"
+                          to={getDashboardLink()}
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          Dashboard
+                        </Link>
+                        <Link
+                          className="dropdown-item"
+                          to={
+                            user.role === "vendor"
+                              ? "/vendor/profile"
+                              : "/customer/profile"
+                          }
+                          onClick={() => setShowUserMenu(false)}
+                        >
+                          Profile
+                        </Link>
+                        <hr className="dropdown-divider" />
+                        <button
+                          className="dropdown-item text-danger"
+                          onClick={() => {
+                            setShowUserMenu(false);
+                            handleLogout();
+                          }}
+                        >
+                          <FiLogOut className="me-2" />
+                          Logout
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               ) : (
                 <div className="d-flex gap-2">
                   <Link to="/login">

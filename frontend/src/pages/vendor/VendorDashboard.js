@@ -94,28 +94,28 @@ const VendorDashboard = () => {
 
   const stats = [
     {
-      icon: "🚗",
+      icon: "FiCar",
       label: "Total Vehicles",
       value: vehicles.length,
       color: "var(--primary-color)",
       bgColor: "rgba(99, 102, 241, 0.1)",
     },
     {
-      icon: "✅",
+      icon: "FiCheckSquare",
       label: "Active Vehicles",
       value: activeVehicles,
       color: "var(--secondary-color)",
       bgColor: "rgba(6, 214, 160, 0.1)",
     },
     {
-      icon: "📅",
+      icon: "FiCalendar",
       label: "Total Bookings",
       value: totalBookings,
       color: "var(--warning-color)",
       bgColor: "rgba(245, 158, 11, 0.1)",
     },
     {
-      icon: "💰",
+      icon: "FiDollarSign",
       label: "Total Earnings",
       value: `₹${totalEarnings.toLocaleString()}`,
       color: "var(--success-color)",
@@ -171,7 +171,7 @@ const VendorDashboard = () => {
             <div className="d-flex justify-content-between align-items-center mb-4">
               <div>
                 <h2 className="text-gradient fw-bold mb-1">
-                  Welcome, {user?.name}! 🚀
+                  Welcome, {user?.name}!
                 </h2>
                 <p className="text-muted mb-0">
                   Manage your vehicle fleet and bookings
@@ -371,12 +371,9 @@ const VendorDashboard = () => {
 
                         <div className="d-flex gap-2">
                           {/* Removed eye icon, only show/hide and delete remain */}
-                          <button
-                            className="btn btn-outline-secondary btn-sm flex-fill"
-                            title="Edit Vehicle"
-                          >
+                          <Link to={`/vendor/vehicle/${vehicle._id}/edit`} className="btn btn-outline-secondary btn-sm flex-fill" title="Edit Vehicle">
                             <FiEdit />
-                          </button>
+                          </Link>
                           <button
                             className={`btn btn-outline-${
                               vehicle.status === "Available"
@@ -416,9 +413,6 @@ const VendorDashboard = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
-                <div className="mb-3" style={{ fontSize: "4rem" }}>
-                  🚗
-                </div>
                 <h4 className="mb-3">No vehicles yet</h4>
                 <p className="text-muted mb-4">
                   Start earning by adding your first vehicle to the platform.

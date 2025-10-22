@@ -32,6 +32,7 @@ import VendorVehicles from "./pages/vendor/VendorVehicles";
 import VendorBookings from "./pages/vendor/VendorBookings";
 import VendorProfile from "./pages/vendor/VendorProfile";
 import AddVehicle from "./pages/vendor/AddVehicle";
+import EditVehicle from "./pages/vendor/EditVehicle";
 
 function App() {
   useEffect(() => {
@@ -108,6 +109,7 @@ function AppContent() {
                     <Route path="dashboard" element={<VendorDashboard />} />
                     <Route path="vehicles" element={<VendorVehicles />} />
                     <Route path="vehicles/add" element={<AddVehicle />} />
+                    <Route path="vehicle/:id/edit" element={<EditVehicle />} />
                     <Route path="bookings" element={<VendorBookings />} />
                     <Route path="profile" element={<VendorProfile />} />
                   </Routes>
