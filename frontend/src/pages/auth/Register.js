@@ -110,7 +110,7 @@ const Register = () => {
                         onChange={handleChange}
                       />
                       <label
-                        className="btn btn-outline-primary w-100 p-3 text-center"
+                        className={`btn ${formData.role === 'customer' ? 'btn-primary-modern' : 'btn-outline-modern'} w-100 p-3 text-center`}
                         htmlFor="customer"
                       >
                         <div className="d-flex flex-column align-items-center">
@@ -133,7 +133,7 @@ const Register = () => {
                         onChange={handleChange}
                       />
                       <label
-                        className="btn btn-outline-success w-100 p-3 text-center"
+                        className={`btn ${formData.role === 'vendor' ? 'btn-primary-modern' : 'btn-outline-modern'} w-100 p-3 text-center`}
                         htmlFor="vendor"
                       >
                         <div className="d-flex flex-column align-items-center">
@@ -241,15 +241,6 @@ const Register = () => {
                           placeholder="Confirm password"
                           required
                         />
-                        <button
-                          type="button"
-                          className="btn btn-link position-absolute top-50 end-0 translate-middle-y me-2 text-muted"
-                          onClick={() =>
-                            setShowConfirmPassword(!showConfirmPassword)
-                          }
-                        >
-                          {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
-                        </button>
                       </div>
                     </motion.div>
                   </div>
@@ -275,9 +266,7 @@ const Register = () => {
                       Creating Account...
                     </div>
                   ) : (
-                    `Create ${
-                      formData.role === "vendor" ? "Vendor" : "Customer"
-                    } Account`
+                    `Create ${formData.role === 'vendor' ? 'Vendor' : 'Customer'} Account`
                   )}
                 </motion.button>
 

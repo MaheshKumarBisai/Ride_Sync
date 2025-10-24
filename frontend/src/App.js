@@ -17,6 +17,8 @@ import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
+import AboutUs from "./pages/AboutUs";
+import ContactUs from "./pages/ContactUs";
 
 // Customer Components
 import CustomerDashboard from "./pages/customer/CustomerDashboard";
@@ -30,6 +32,7 @@ import VendorVehicles from "./pages/vendor/VendorVehicles";
 import VendorBookings from "./pages/vendor/VendorBookings";
 import VendorProfile from "./pages/vendor/VendorProfile";
 import AddVehicle from "./pages/vendor/AddVehicle";
+import EditVehicle from "./pages/vendor/EditVehicle";
 
 function App() {
   useEffect(() => {
@@ -47,11 +50,40 @@ function App() {
         <div className="App">
           {/* Conditionally render Navbar: hidden on /login and /register */}
           <AppContent />
-          <Routes>
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+        </div>
+      </Router>
+    </AuthProvider>
+  );
+}
+
+function AppContent() {
+  const location = useLocation();
+  const hideOn = ["/login", "/register"];
+  const shouldHide = hideOn.includes(location.pathname);
+
+  return (
+    <>
+      {!shouldHide && <Navbar />}
+      <main style={{ paddingTop: !shouldHide ? '80px' : '0' }}>
+        <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/about-us" element={<AboutUs />} />
+            <Route path="/contact-us" element={<ContactUs />} />
 
             {/* Customer Routes */}
             <Route
@@ -77,6 +109,7 @@ function App() {
                     <Route path="dashboard" element={<VendorDashboard />} />
                     <Route path="vehicles" element={<VendorVehicles />} />
                     <Route path="vehicles/add" element={<AddVehicle />} />
+                    <Route path="vehicle/:id/edit" element={<EditVehicle />} />
                     <Route path="bookings" element={<VendorBookings />} />
                     <Route path="profile" element={<VendorProfile />} />
                   </Routes>
@@ -87,31 +120,10 @@ function App() {
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
-          <Footer />
-          <ToastContainer
-            position="top-right"
-            autoClose={3000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="light"
-          />
-        </div>
-      </Router>
-    </AuthProvider>
+      </main>
+      {!shouldHide && <Footer />}
+    </>
   );
-}
-
-function AppContent() {
-  const location = useLocation();
-  const hideOn = ["/login", "/register"];
-  const shouldHide = hideOn.includes(location.pathname);
-
-  return <>{!shouldHide && <Navbar />}</>;
 }
 
 export default App;

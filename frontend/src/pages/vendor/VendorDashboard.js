@@ -10,7 +10,7 @@ import {
   FiEdit,
   FiTrash2,
 } from "react-icons/fi";
-import axios from "axios";
+import api from "../../api";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 
@@ -28,8 +28,8 @@ const VendorDashboard = () => {
     try {
       // Fetch vendor's vehicles and bookings
       const [vehiclesRes, bookingsRes] = await Promise.all([
-        axios.get("http://localhost:4000/api/vehicles?vendor=true"),
-        axios.get("http://localhost:4000/api/bookings?vendor=true"),
+        api.get("/vehicles?vendor=true"),
+        api.get("/bookings?vendor=true"),
       ]);
 
       setVehicles(vehiclesRes.data.vehicles || vehiclesRes.data || []);
@@ -94,28 +94,28 @@ const VendorDashboard = () => {
 
   const stats = [
     {
-      icon: "🚗",
+      icon: "FiCar",
       label: "Total Vehicles",
       value: vehicles.length,
       color: "var(--primary-color)",
       bgColor: "rgba(99, 102, 241, 0.1)",
     },
     {
-      icon: "✅",
+      icon: "FiCheckSquare",
       label: "Active Vehicles",
       value: activeVehicles,
       color: "var(--secondary-color)",
       bgColor: "rgba(6, 214, 160, 0.1)",
     },
     {
-      icon: "📅",
+      icon: "FiCalendar",
       label: "Total Bookings",
       value: totalBookings,
       color: "var(--warning-color)",
       bgColor: "rgba(245, 158, 11, 0.1)",
     },
     {
-      icon: "💰",
+      icon: "FiDollarSign",
       label: "Total Earnings",
       value: `₹${totalEarnings.toLocaleString()}`,
       color: "var(--success-color)",
@@ -126,7 +126,7 @@ const VendorDashboard = () => {
   const handleDeleteVehicle = async (vehicleId) => {
     if (window.confirm("Are you sure you want to delete this vehicle?")) {
       try {
-        await axios.delete(`http://localhost:4000/api/vehicles/${vehicleId}`);
+        await api.delete(`/vehicles/${vehicleId}`);
         setVehicles(vehicles.filter((v) => v._id !== vehicleId));
         toast.success("Vehicle deleted successfully");
       } catch (error) {
@@ -138,7 +138,7 @@ const VendorDashboard = () => {
   const handleToggleVisibility = async (vehicleId, currentStatus) => {
     const newStatus = currentStatus === "Available" ? "Inactive" : "Available";
     try {
-      await axios.put(`http://localhost:4000/api/vehicles/${vehicleId}`, {
+      await api.put(`/vehicles/${vehicleId}`, {
         status: newStatus,
       });
       setVehicles(
@@ -171,7 +171,7 @@ const VendorDashboard = () => {
             <div className="d-flex justify-content-between align-items-center mb-4">
               <div>
                 <h2 className="text-gradient fw-bold mb-1">
-                  Welcome, {user?.name}! 🚀
+                  Welcome, {user?.name}!
                 </h2>
                 <p className="text-muted mb-0">
                   Manage your vehicle fleet and bookings
@@ -212,7 +212,7 @@ const VendorDashboard = () => {
           {stats.map((stat, index) => (
             <div key={index} className="col-lg-3 col-md-6 mb-4">
               <motion.div
-                className="stats-card"
+                className="stats-card h-100"
                 style={{ borderLeftColor: stat.color }}
                 whileHover={{ scale: 1.05 }}
                 data-aos="fade-up"
@@ -342,8 +342,8 @@ const VendorDashboard = () => {
                     >
                       <div className="position-relative">
                         <img
-                          src={vehicle.image}
-                          className="vehicle-image-modern"
+                          src={`http://localhost:4000${vehicle.image}`}
+                          className="vehicle-image-modern img-fluid"
                           alt={`${vehicle.make} ${vehicle.model}`}
                         />
                         <div className="vehicle-badge">{vehicle.status}</div>
@@ -371,12 +371,9 @@ const VendorDashboard = () => {
 
                         <div className="d-flex gap-2">
                           {/* Removed eye icon, only show/hide and delete remain */}
-                          <button
-                            className="btn btn-outline-secondary btn-sm flex-fill"
-                            title="Edit Vehicle"
-                          >
+                          <Link to={`/vendor/vehicle/${vehicle._id}/edit`} className="btn btn-outline-secondary btn-sm flex-fill" title="Edit Vehicle">
                             <FiEdit />
-                          </button>
+                          </Link>
                           <button
                             className={`btn btn-outline-${
                               vehicle.status === "Available"
@@ -416,9 +413,6 @@ const VendorDashboard = () => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
               >
-                <div className="mb-3" style={{ fontSize: "4rem" }}>
-                  🚗
-                </div>
                 <h4 className="mb-3">No vehicles yet</h4>
                 <p className="text-muted mb-4">
                   Start earning by adding your first vehicle to the platform.
