@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiArrowLeft, FiUpload, FiDollarSign, FiMapPin } from "react-icons/fi";
 import { toast } from "react-toastify";
-import axios from "axios";
+import api from "../../api";
 
 const AddVehicle = () => {
   const navigate = useNavigate();
@@ -26,6 +26,9 @@ const AddVehicle = () => {
     image: "",
     images: [],
   });
+  const [uploading, setUploading] = useState(false);
+  const [image, setImage] = useState('');
+  const [images, setImages] = useState([]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,6 +54,37 @@ const AddVehicle = () => {
         ? prev.features.filter((f) => f !== feature)
         : [...prev.features, feature],
     }));
+  };
+
+  const uploadFileHandler = async (e) => {
+    const files = e.target.files;
+    const bodyFormData = new FormData();
+    if (e.target.name === 'image') {
+      bodyFormData.append('image', files[0]);
+    } else {
+      for (let i = 0; i < files.length; i++) {
+        bodyFormData.append('images', files[i]);
+      }
+    }
+    setUploading(true);
+    try {
+      const { data } = await api.post("/upload", bodyFormData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      if (e.target.name === 'image') {
+        setImage(data.files.image.filename);
+        setFormData((prev) => ({ ...prev, image: data.files.image.filename }));
+      } else {
+        const imageFilenames = data.files.images.map((file) => file.filename);
+        setImages(imageFilenames);
+        setFormData((prev) => ({ ...prev, images: imageFilenames }));
+      }
+      setUploading(false);
+    } catch (error) {
+      console.error(error);
+      toast.error('Image upload failed');
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -382,36 +416,36 @@ const AddVehicle = () => {
                   ></textarea>
                 </div>
 
-                {/* Vehicle Image URL */}
+                {/* Vehicle Image Upload */}
                 <div className="mb-5">
                   <h5 className="fw-bold mb-4">
                     <FiUpload className="me-2" />
-                    📷 Vehicle Image
+                    📷 Vehicle Images
                   </h5>
-                  <label className="form-label-modern mb-2">
-                    Primary Image URL (optional)
-                  </label>
-                  <input
-                    type="url"
-                    className="form-control form-control-modern mb-3"
-                    name="image"
-                    value={formData.image}
-                    onChange={handleChange}
-                    placeholder="Primary image URL"
-                  />
-                  <label className="form-label-modern mb-2">
-                    Additional Images (one URL per line or comma separated)
-                  </label>
-                  <textarea
-                    className="form-control form-control-modern mb-2"
-                    rows={4}
-                    placeholder="Enter additional image URLs (one per line or comma separated)"
-                    onChange={(e) => handleImagesChange(e.target.value)}
-                  />
-                  <small className="text-muted">
-                    Tip: Provide high-quality direct image URLs; the first
-                    available image will be used as the primary.
-                  </small>
+                  <div className="mb-3">
+                    <label className="form-label-modern mb-2">
+                      Primary Image
+                    </label>
+                    <input
+                      type="file"
+                      name="image"
+                      className="form-control form-control-modern"
+                      onChange={uploadFileHandler}
+                    />
+                  </div>
+                  <div>
+                    <label className="form-label-modern mb-2">
+                      Gallery Images
+                    </label>
+                    <input
+                      type="file"
+                      name="images"
+                      className="form-control form-control-modern"
+                      onChange={uploadFileHandler}
+                      multiple
+                    />
+                  </div>
+                  {uploading && <div>Uploading...</div>}
                 </div>
 
                 {/* Submit Button */}

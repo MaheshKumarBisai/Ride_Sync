@@ -105,13 +105,6 @@ const Login = () => {
                       placeholder="Enter your password"
                       required
                     />
-                    <button
-                      type="button"
-                      className="btn btn-link position-absolute top-50 end-0 translate-middle-y me-2 text-muted"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <FiEyeOff /> : <FiEye />}
-                    </button>
                   </div>
                 </motion.div>
 
@@ -156,10 +149,10 @@ const Login = () => {
                   </p>
                 </motion.div>
               </form>
-              <div className="mb-3">
+              <div className="mt-3">
                 <button
                   className="btn btn-outline-modern"
-                  onClick={() => window.history.back()}
+                  onClick={() => navigate(-1)}
                 >
                   <FiArrowLeft className="me-2" /> Go Back
                 </button>

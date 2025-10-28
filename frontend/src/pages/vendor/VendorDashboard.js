@@ -10,7 +10,7 @@ import {
   FiEdit,
   FiTrash2,
 } from "react-icons/fi";
-import axios from "axios";
+import api from "../../api";
 import { useAuth } from "../../contexts/AuthContext";
 import { toast } from "react-toastify";
 
@@ -28,8 +28,8 @@ const VendorDashboard = () => {
     try {
       // Fetch vendor's vehicles and bookings
       const [vehiclesRes, bookingsRes] = await Promise.all([
-        axios.get("http://localhost:4000/api/vehicles?vendor=true"),
-        axios.get("http://localhost:4000/api/bookings?vendor=true"),
+        api.get("/vehicles?vendor=true"),
+        api.get("/bookings?vendor=true"),
       ]);
 
       setVehicles(vehiclesRes.data.vehicles || vehiclesRes.data || []);
@@ -126,7 +126,7 @@ const VendorDashboard = () => {
   const handleDeleteVehicle = async (vehicleId) => {
     if (window.confirm("Are you sure you want to delete this vehicle?")) {
       try {
-        await axios.delete(`http://localhost:4000/api/vehicles/${vehicleId}`);
+        await api.delete(`/vehicles/${vehicleId}`);
         setVehicles(vehicles.filter((v) => v._id !== vehicleId));
         toast.success("Vehicle deleted successfully");
       } catch (error) {
@@ -138,7 +138,7 @@ const VendorDashboard = () => {
   const handleToggleVisibility = async (vehicleId, currentStatus) => {
     const newStatus = currentStatus === "Available" ? "Inactive" : "Available";
     try {
-      await axios.put(`http://localhost:4000/api/vehicles/${vehicleId}`, {
+      await api.put(`/vehicles/${vehicleId}`, {
         status: newStatus,
       });
       setVehicles(
@@ -212,7 +212,7 @@ const VendorDashboard = () => {
           {stats.map((stat, index) => (
             <div key={index} className="col-lg-3 col-md-6 mb-4">
               <motion.div
-                className="stats-card"
+                className="stats-card h-100"
                 style={{ borderLeftColor: stat.color }}
                 whileHover={{ scale: 1.05 }}
                 data-aos="fade-up"
@@ -342,8 +342,8 @@ const VendorDashboard = () => {
                     >
                       <div className="position-relative">
                         <img
-                          src={vehicle.image}
-                          className="vehicle-image-modern"
+                          src={`http://localhost:4000${vehicle.image}`}
+                          className="vehicle-image-modern img-fluid"
                           alt={`${vehicle.make} ${vehicle.model}`}
                         />
                         <div className="vehicle-badge">{vehicle.status}</div>

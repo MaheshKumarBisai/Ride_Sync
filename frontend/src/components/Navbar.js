@@ -41,20 +41,13 @@ const Navbar = () => {
 
   return (
     <motion.nav
-      className="navbar navbar-expand-lg navbar-modern floating-navbar fixed-top shadow-modern w-100"
+      className="navbar navbar-expand-lg navbar-modern shadow-sm fixed-top"
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
       style={{
-        borderRadius: "0 0 2rem 2rem",
-        margin: 0,
-        left: 0,
-        right: 0,
-        width: "100vw",
-        maxWidth: "100vw",
-        zIndex: 1050,
-        background: "linear-gradient(90deg, #6366f1 0%, #06d6a0 100%)",
-        boxShadow: "0 8px 32px rgba(0,0,0,0.12)",
+        background: "var(--background-color)",
+        borderBottom: "1px solid var(--border-color)",
       }}
     >
       <div className="container">

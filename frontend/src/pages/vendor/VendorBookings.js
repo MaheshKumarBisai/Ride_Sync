@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FiCalendar, FiUser, FiCheck, FiX, FiPhone } from "react-icons/fi";
-import axios from "axios";
+import api from "../../api";
 import { toast } from "react-toastify";
+import { Modal, Button } from 'react-bootstrap';
 
 const VendorBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     fetchBookings();
@@ -15,8 +18,8 @@ const VendorBookings = () => {
 
   const fetchBookings = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:4000/api/bookings?vendor=true"
+      const response = await api.get(
+        "/bookings?vendor=true"
       );
       setBookings(response.data.bookings || []);
     } catch (error) {
@@ -52,8 +55,8 @@ const VendorBookings = () => {
 
   const updateBookingStatus = async (bookingId, newStatus) => {
     try {
-      await axios.put(
-        `http://localhost:4000/api/bookings/${bookingId}/status`,
+      await api.put(
+        `/bookings/${bookingId}/status`,
         {
           status: newStatus,
         }
@@ -71,6 +74,16 @@ const VendorBookings = () => {
         error.response?.data?.message || "Failed to update booking status"
       );
     }
+  };
+
+  const handleShowModal = (booking) => {
+    setSelectedBooking(booking);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedBooking(null);
   };
 
   const filteredBookings = bookings.filter((booking) => {
@@ -226,7 +239,7 @@ const VendorBookings = () => {
                       </td>
                       <td>
                         <div className="d-flex gap-1">
-                          <button className="btn btn-outline-primary btn-sm">
+                          <button className="btn btn-outline-primary btn-sm" onClick={() => handleShowModal(booking)}>
                             <FiUser className="me-1" />
                             View
                           </button>
@@ -301,6 +314,30 @@ const VendorBookings = () => {
             </div>
           </div>
         )}
+        <Modal show={showModal} onHide={handleCloseModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Booking Details</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            {selectedBooking && (
+              <div>
+                <h5>{selectedBooking.vehicle?.make} {selectedBooking.vehicle?.model}</h5>
+                <p><strong>Customer:</strong> {selectedBooking.user?.name}</p>
+                <p><strong>Email:</strong> {selectedBooking.user?.email}</p>
+                <p><strong>Status:</strong> {selectedBooking.status}</p>
+                <p><strong>From:</strong> {new Date(selectedBooking.startDate).toLocaleDateString()}</p>
+                <p><strong>To:</strong> {new Date(selectedBooking.endDate).toLocaleDateString()}</p>
+                <p><strong>Total Amount:</strong> ₹{selectedBooking.totalAmount}</p>
+                <p><strong>Pickup Location:</strong> {selectedBooking.pickupLocation}</p>
+              </div>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseModal}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </div>
   );
